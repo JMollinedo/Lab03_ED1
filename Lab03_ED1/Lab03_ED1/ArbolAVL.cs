@@ -5,47 +5,86 @@ using System.Web;
 
 namespace Lab03_ED1
 {
+    /// <summary>
+    /// Nodo de Arbol AVL
+    /// </summary>
+    /// <typeparam name="T">Tipo de Dato en Nodo</typeparam>
     public class NodoArbolAVL <T>
     {
-       public T value;
-       public int FactorEquilibrio;
-       public NodoArbolAVL<T> HijoIzquierdo, HijoDerecho;
-
+        /// <summary>
+        /// Valor en el nodo
+        /// </summary>
+        public T value;
+        /// <summary>
+        /// Factor de Equilibrio del Nodo en el Arbol
+        /// </summary>
+        public int factorEquilibrio;
+        /// <summary>
+        /// Nodo hijo izquierdo
+        /// </summary>
+        public NodoArbolAVL<T> hijoIzquierdo;
+        /// <summary>
+        /// Nodo hijo derecho
+        /// </summary>
+        public NodoArbolAVL<T> hijoDerecho;
+        /// <summary>
+        /// Nodo es hoja del Arbol
+        /// </summary>
         public bool EsHoja
         {
             get
             {
-                return HijoDerecho == null && HijoIzquierdo == null;
+                return hijoDerecho == null && hijoIzquierdo == null;
             }
         }
-
-
-        public NodoArbolAVL(T value)
+        /// <summary>
+        /// Contructor de Nodo
+        /// </summary>
+        /// <param name="nodeValue">Valor del Nodo</param>
+        public NodoArbolAVL(T nodeValue)
         {
-            this.value = value;
-            this.FactorEquilibrio = 0;
-            this.HijoIzquierdo = null;
-            this.HijoDerecho = null;
+            value = nodeValue;
+            factorEquilibrio = 0;
+            hijoIzquierdo = null;
+            hijoDerecho = null;
         }
     }
+    /// <summary>
+    /// Arbol ALV
+    /// </summary>
+    /// <typeparam name="T">Tipo de Dato en Arbol</typeparam>
     public class ArbolAVL <T> where T : IComparable
     {
-
+        /// <summary>
+        /// Nodo Raiz de Arbol
+        /// </summary>
         public NodoArbolAVL<T> Raiz;
-        
+        /// <summary>
+        /// Constructor de Arbol
+        /// </summary>
         public ArbolAVL()
         {
-            this.Raiz = null;
+            Raiz = null;
         }
 
         //Buscar
         /// <summary>
-        /// Función que recibe un valor, y devuelve un nodo que contenga ese valor
+        /// Funcion de busqueda de valor en Arbol
+        /// </summary>
+        /// <param name="valorBuscado">Valor que se busca en el arbol</param>
+        /// <returns>Nodo con el valor buscado</returns>
+        public NodoArbolAVL<T> Buscar(T valorBuscado)
+        {
+            return Buscar(valorBuscado, Raiz);
+        }
+        
+        /// <summary>
+        /// Función recursiva que recibe un valor, y devuelve un nodo que contenga ese valor
         /// </summary>
         /// <param name="value"> valor a buscar </param>
         /// <param name="raiz"></param>
         /// <returns></returns>
-        public NodoArbolAVL<T> Buscar(T value, NodoArbolAVL<T> raiz)
+        private NodoArbolAVL<T> Buscar(T value, NodoArbolAVL<T> raiz)
         {
             if (Raiz == null)
             {
@@ -57,11 +96,11 @@ namespace Lab03_ED1
             }
             else if (raiz.value.CompareTo(value) == -1)
             {
-                return Buscar(value, raiz.HijoDerecho);
+                return Buscar(value, raiz.hijoDerecho);
             }
             else
             {
-                return Buscar(value, raiz.HijoIzquierdo);
+                return Buscar(value, raiz.hijoIzquierdo);
             }
         }
 
@@ -73,31 +112,31 @@ namespace Lab03_ED1
                 return -1;
             }
             else
-               return x.FactorEquilibrio;
+               return x.factorEquilibrio;
         }
 
         //Rotación Simple Izquierda
         public NodoArbolAVL<T> RotacionIzquierda(NodoArbolAVL<T> Nodo)
         {
-            NodoArbolAVL<T> Auxiliar = Nodo.HijoIzquierdo;
-            Nodo.HijoIzquierdo = Auxiliar.HijoDerecho;
+            NodoArbolAVL<T> Auxiliar = Nodo.hijoIzquierdo;
+            Nodo.hijoIzquierdo = Auxiliar.hijoDerecho;
 
-            Auxiliar.HijoDerecho = Nodo;
+            Auxiliar.hijoDerecho = Nodo;
             //Obtiene el mayor factor de equilibrio de sus hijos.
-            Nodo.FactorEquilibrio = Math.Max(ObtenerFactorEquilibrio(Nodo.HijoIzquierdo), ObtenerFactorEquilibrio(Nodo.HijoDerecho) + 1);
-            Auxiliar.FactorEquilibrio = Math.Max(ObtenerFactorEquilibrio(Auxiliar.HijoIzquierdo), ObtenerFactorEquilibrio(Auxiliar.HijoDerecho)) + 1;
+            Nodo.factorEquilibrio = Math.Max(ObtenerFactorEquilibrio(Nodo.hijoIzquierdo), ObtenerFactorEquilibrio(Nodo.hijoDerecho) + 1);
+            Auxiliar.factorEquilibrio = Math.Max(ObtenerFactorEquilibrio(Auxiliar.hijoIzquierdo), ObtenerFactorEquilibrio(Auxiliar.hijoDerecho)) + 1;
             return Auxiliar;
         }
         //Rotación Simple Derecha
         public NodoArbolAVL<T> RotacionDerecha(NodoArbolAVL<T> Nodo)
         {
-            NodoArbolAVL<T> Auxiliar = Nodo.HijoDerecho;
-            Nodo.HijoDerecho = Auxiliar.HijoIzquierdo;
+            NodoArbolAVL<T> Auxiliar = Nodo.hijoDerecho;
+            Nodo.hijoDerecho = Auxiliar.hijoIzquierdo;
 
-            Auxiliar.HijoIzquierdo = Nodo;
+            Auxiliar.hijoIzquierdo = Nodo;
             //Obtiene el mayor factor de equilibrio de sus hijos.
-            Nodo.FactorEquilibrio = Math.Max(ObtenerFactorEquilibrio(Nodo.HijoIzquierdo), ObtenerFactorEquilibrio(Nodo.HijoDerecho)) + 1;
-            Auxiliar.FactorEquilibrio = Math.Max(ObtenerFactorEquilibrio(Auxiliar.HijoIzquierdo), ObtenerFactorEquilibrio(Auxiliar.HijoDerecho)) + 1;
+            Nodo.factorEquilibrio = Math.Max(ObtenerFactorEquilibrio(Nodo.hijoIzquierdo), ObtenerFactorEquilibrio(Nodo.hijoDerecho)) + 1;
+            Auxiliar.factorEquilibrio = Math.Max(ObtenerFactorEquilibrio(Auxiliar.hijoIzquierdo), ObtenerFactorEquilibrio(Auxiliar.hijoDerecho)) + 1;
             return Auxiliar;
         }
 
@@ -105,7 +144,7 @@ namespace Lab03_ED1
         public NodoArbolAVL<T> RotacionDobleIzquierda(NodoArbolAVL<T> Nodo)
         {
             NodoArbolAVL<T> Auxiliar;
-            Nodo.HijoIzquierdo = RotacionDerecha(Nodo.HijoIzquierdo);
+            Nodo.hijoIzquierdo = RotacionDerecha(Nodo.hijoIzquierdo);
             Auxiliar = RotacionIzquierda(Nodo);
             return Auxiliar;
         }
@@ -113,7 +152,7 @@ namespace Lab03_ED1
         public NodoArbolAVL<T> RotacionDobleDerecha(NodoArbolAVL<T> Nodo)
         {
             NodoArbolAVL<T> Auxiliar;
-            Nodo.HijoDerecho = RotacionIzquierda(Nodo.HijoDerecho);
+            Nodo.hijoDerecho = RotacionIzquierda(Nodo.hijoDerecho);
             Auxiliar = RotacionDerecha(Nodo);
             return Auxiliar;
         }
@@ -124,16 +163,16 @@ namespace Lab03_ED1
             NodoArbolAVL<T> NuevoPadre = SubArbol;
             if (Nuevo.value.CompareTo(SubArbol.value) == -1)
             {
-                if (SubArbol.HijoIzquierdo == null)
+                if (SubArbol.hijoIzquierdo == null)
                 {
-                    SubArbol.HijoIzquierdo = Nuevo;
+                    SubArbol.hijoIzquierdo = Nuevo;
                 }
                 else
                 {
-                    SubArbol.HijoIzquierdo = InsertarAVL(Nuevo, SubArbol.HijoIzquierdo);
-                    if (ObtenerFactorEquilibrio(SubArbol.HijoIzquierdo) - ObtenerFactorEquilibrio (SubArbol.HijoDerecho) == 2 )
+                    SubArbol.hijoIzquierdo = InsertarAVL(Nuevo, SubArbol.hijoIzquierdo);
+                    if (ObtenerFactorEquilibrio(SubArbol.hijoIzquierdo) - ObtenerFactorEquilibrio (SubArbol.hijoDerecho) == 2 )
                     {
-                        if (Nuevo.value.CompareTo(SubArbol.HijoIzquierdo) == -1)
+                        if (Nuevo.value.CompareTo(SubArbol.hijoIzquierdo) == -1)
                         {
                             NuevoPadre = RotacionIzquierda(SubArbol);
                         }
@@ -143,21 +182,19 @@ namespace Lab03_ED1
                         }
                     }
                 }
-                
-
             }
             else if(Nuevo.value.CompareTo(SubArbol.value) == 1)
             {
-                if (SubArbol.HijoDerecho == null)
+                if (SubArbol.hijoDerecho == null)
                 {
-                    SubArbol.HijoDerecho = Nuevo;
+                    SubArbol.hijoDerecho = Nuevo;
                 }
                 else
                 {
-                    SubArbol.HijoDerecho = InsertarAVL(Nuevo, SubArbol.HijoDerecho);
-                    if (ObtenerFactorEquilibrio(SubArbol.HijoDerecho) - ObtenerFactorEquilibrio(SubArbol.HijoIzquierdo) == 2)
+                    SubArbol.hijoDerecho = InsertarAVL(Nuevo, SubArbol.hijoDerecho);
+                    if (ObtenerFactorEquilibrio(SubArbol.hijoDerecho) - ObtenerFactorEquilibrio(SubArbol.hijoIzquierdo) == 2)
                     {
-                        if (Nuevo.value.CompareTo(SubArbol.HijoDerecho) == 1)
+                        if (Nuevo.value.CompareTo(SubArbol.hijoDerecho) == 1)
                         {
                             NuevoPadre = RotacionDerecha(SubArbol);
                         }
@@ -170,20 +207,20 @@ namespace Lab03_ED1
             }
             else
             {
-                throw new System.InvalidOperationException("Nodo Duplicado");
+                throw new InvalidOperationException("Nodo Duplicado");
             }
             //Actualizando Factor Equilibrio
-            if (SubArbol.HijoIzquierdo == null && SubArbol.HijoDerecho != null)
+            if (SubArbol.hijoIzquierdo == null && SubArbol.hijoDerecho != null)
             {
-                SubArbol.FactorEquilibrio = SubArbol.HijoDerecho.FactorEquilibrio + 1;
+                SubArbol.factorEquilibrio = SubArbol.hijoDerecho.factorEquilibrio + 1;
             }
-            else if (SubArbol.HijoDerecho == null && SubArbol.HijoIzquierdo != null)
+            else if (SubArbol.hijoDerecho == null && SubArbol.hijoIzquierdo != null)
             {
-                SubArbol.FactorEquilibrio = SubArbol.HijoIzquierdo.FactorEquilibrio + 1;
+                SubArbol.factorEquilibrio = SubArbol.hijoIzquierdo.factorEquilibrio + 1;
             }
             else
             {
-                SubArbol.FactorEquilibrio = Math.Max(ObtenerFactorEquilibrio(SubArbol.HijoIzquierdo), ObtenerFactorEquilibrio(SubArbol.HijoDerecho)) +1;
+                SubArbol.factorEquilibrio = Math.Max(ObtenerFactorEquilibrio(SubArbol.hijoIzquierdo), ObtenerFactorEquilibrio(SubArbol.hijoDerecho)) +1;
             }
             return NuevoPadre;
         }
@@ -198,102 +235,7 @@ namespace Lab03_ED1
             {
                 Raiz = InsertarAVL(Nuevo, Raiz);
             }
-
         }
-
-        #region Eliminación
-        ////Eliminar AVL
-        //public NodoArbolAVL<T> Eliminar(T valor)
-        //{
-        //    NodoArbolAVL<T> auxiliar = Raiz;
-        //    NodoArbolAVL<T> padre = Raiz;
-        //    bool esHijoIzquierdo = true;
-        //    while (auxiliar.value.CompareTo(valor) != 0)
-        //    {
-        //        padre = auxiliar;
-        //        if (valor.CompareTo(auxiliar.value) < 0)
-        //        {
-        //            esHijoIzquierdo = true;
-        //            auxiliar = auxiliar.HijoIzquierdo;
-        //        }
-        //        else
-        //        {
-        //            esHijoIzquierdo = false;
-        //            auxiliar = auxiliar.HijoDerecho;
-        //        }
-        //        if (auxiliar == null)
-        //        {
-        //            return null;
-        //        }
-        //    }// Fin ciclo inicial
-        //    if (auxiliar.EsHoja)
-        //    {
-        //        if (auxiliar == Raiz)
-        //        {
-        //            Raiz = null;
-        //        }
-        //        else if (esHijoIzquierdo)
-        //        {
-        //            padre.HijoIzquierdo = null;
-        //        }
-        //        else
-        //        {
-        //            padre.HijoDerecho = null;
-        //        }
-        //    }
-        //    else if (auxiliar.HijoDerecho == null)
-        //    {
-        //        NodoArbolAVL<T> temp = auxiliar.HijoIzquierdo;
-        //        if (auxiliar == Raiz)
-        //        {
-        //            Raiz = temp;
-        //        }
-        //        else if (esHijoIzquierdo)
-        //        {
-        //            padre.HijoIzquierdo = temp;
-        //        }
-        //        else
-        //        {
-        //            padre.HijoDerecho = temp;
-        //        }
-        //    }
-        //    else if (auxiliar.HijoIzquierdo == null)
-        //    {
-        //        NodoArbolAVL<T> temp = auxiliar.HijoDerecho;
-        //        if (auxiliar == Raiz)
-        //        {
-        //            Raiz = temp;
-        //        }
-        //        else if (esHijoIzquierdo)
-        //        {
-        //            padre.HijoIzquierdo = temp;
-        //        }
-        //        else
-        //        {
-        //            padre.HijoDerecho = temp;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        NodoArbolAVL<T> reemplazo = Reemplazar(auxiliar);
-        //        if (auxiliar == Raiz)
-        //        {
-        //            Raiz = reemplazo;
-        //        }
-        //        else if (esHijoIzquierdo)
-        //        {
-        //            padre.HijoIzquierdo = reemplazo;
-        //        }
-        //        else
-        //        {
-        //            padre.HijoDerecho = reemplazo;
-        //        }
-        //        reemplazo.HijoIzquierdo = auxiliar.HijoIzquierdo;
-
-        //    }
-        //    return auxiliar;
-        //}
-        #endregion
 
         /// <summary>
         /// Elimina un Nodo mediante sustitucion
@@ -304,30 +246,80 @@ namespace Lab03_ED1
         {
             NodoArbolAVL<T> remplazoPadre = NodoAEliminar;
             NodoArbolAVL<T> reemplazo = NodoAEliminar;
-            NodoArbolAVL<T> auxiliar = NodoAEliminar.HijoDerecho;
+            NodoArbolAVL<T> auxiliar = NodoAEliminar.hijoDerecho;
             while (auxiliar != null)
             {
                 remplazoPadre = reemplazo;
                 reemplazo = auxiliar;
-                auxiliar = auxiliar.HijoIzquierdo;
+                auxiliar = auxiliar.hijoIzquierdo;
             }
-            if (reemplazo != NodoAEliminar.HijoDerecho)
+            if (reemplazo != NodoAEliminar.hijoDerecho)
             {
-                remplazoPadre.HijoIzquierdo = reemplazo.HijoDerecho;
-                reemplazo.HijoDerecho = NodoAEliminar.HijoDerecho;
+                remplazoPadre.hijoIzquierdo = reemplazo.hijoDerecho;
+                reemplazo.hijoDerecho = NodoAEliminar.hijoDerecho;
             }
             return reemplazo;
         }
 
+        /// <summary>
+        /// Delegado para Realizar Ordenes
+        /// </summary>
+        /// <param name="Datos">Lista con Datos Ordenados</param>
+        public delegate void Ordenes(ref List<T> Datos);
 
-        //Recorridos
+        /// <summary>
+        /// Metodo para realizar ordenamientos utilzando delegados
+        /// </summary>
+        /// <param name="Datos">Lista de Datos Ordenados</param>
+        /// <param name="orden">Tipo de orden</param>
+        /// <example>
+        /// Ordenar InOrder
+        /// <code>
+        /// Ordenar(ref ListaDatos, InOrder);
+        /// </code>
+        /// </example>
+        public void Ordenar(ref List<T> Datos, Ordenes orden)
+        {
+            orden(ref Datos);
+        }
+
+        /// <summary>
+        /// Metodo que recorre el arbol en Preorden
+        /// </summary>
+        /// <param name="Datos">Datos Ordenados</param>
+        public void PreOrder(ref List<T> Datos)
+        {
+            PreOrder(Raiz, ref Datos);
+        }
+        /// <summary>
+        /// Metodo que recorre el arbol en Inorden
+        /// </summary>
+        /// <param name="Datos">Datos Ordenados</param>
+        public void InOrder(ref List<T> Datos)
+        {
+            InOrder(Raiz, ref Datos);
+        }
+        /// <summary>
+        /// Metodo que recorre el arbol en Inorden
+        /// </summary>
+        /// <param name="Datos">Datos Ordenados</param>
+        public void PostOrder(ref List<T> Datos)
+        {
+            PostOrder(Raiz, ref Datos);
+        }
+
+        /// <summary>
+        /// Metodo Recursivo que recorre el arbol
+        /// </summary>
+        /// <param name="Aux">Nodo Raiz</param>
+        /// <param name="Elements">Lista de Datos en Orden</param>
         private void PreOrder(NodoArbolAVL<T> Aux, ref List<T> Elements)
         {
             if (Aux != null)
             {
                 Elements.Add(Aux.value);
-                PreOrder(Aux.HijoIzquierdo, ref Elements);
-                PreOrder(Aux.HijoDerecho, ref Elements);
+                PreOrder(Aux.hijoIzquierdo, ref Elements);
+                PreOrder(Aux.hijoDerecho, ref Elements);
             }
         }
         /// <summary>
@@ -339,9 +331,9 @@ namespace Lab03_ED1
         {
             if (Aux != null)
             {
-                InOrder(Aux.HijoIzquierdo, ref Elements);
+                InOrder(Aux.hijoIzquierdo, ref Elements);
                 Elements.Add(Aux.value);
-                InOrder(Aux.HijoDerecho, ref Elements);
+                InOrder(Aux.hijoDerecho, ref Elements);
             }
         }
         /// <summary>
@@ -353,12 +345,11 @@ namespace Lab03_ED1
         {
             if (Aux != null)
             {
-                PostOrder(Aux.HijoIzquierdo, ref Elements);
-                PostOrder(Aux.HijoDerecho, ref Elements);
+                PostOrder(Aux.hijoIzquierdo, ref Elements);
+                PostOrder(Aux.hijoDerecho, ref Elements);
                 Elements.Add(Aux.value);
             }
         }
-
 
     }
 }
