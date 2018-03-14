@@ -1,0 +1,70 @@
+﻿@model IEnumerable<Lab03_ED1.Models.Partido>
+
+@{
+    ViewBag.Title = "IndexFecha";
+}
+
+<h2>Partidos Por Fecha</h2>
+
+<p>
+    @Html.ActionLink("Cargar archivo Json", "Upload")&nbsp;&nbsp;&nbsp;
+    @Html.ActionLink("Agregar Partido", "Create")
+</p>
+
+<p ALIGN="right">
+    @Html.ActionLink("Pre-Orden", "Orden", new { order = "PreOrder" })&nbsp;&nbsp;&nbsp;
+    @Html.ActionLink("In-Orden", "Orden", new { order = "InOrder" })&nbsp;&nbsp;&nbsp;
+    @Html.ActionLink("Post-orden", "Orden", new { order = "PostOrder" })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.noPartido)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FechaPartido)
+        </th>       
+        <th>
+            @Html.DisplayNameFor(model => model.Pais1)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Pais2)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Grupo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Estadio)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.noPartido)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FechaPartido)
+        </td>       
+        <td>
+            @Html.DisplayFor(modelItem => item.Pais1)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Pais2)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Grupo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Estadio)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
+        </td>
+    </tr>
+}
+
+</table>
