@@ -13,13 +13,11 @@ namespace Lab03_ED1.DataBase
         private static object syncRoot = new object();
 
         public ArbolAVL<Partido> fArbolAVL = new ArbolAVL<Partido>();
+        public ArbolAVL<Partido> nArbolAVL = new ArbolAVL<Partido>();
         public List<Partido> fListaPartidos = new List<Partido>();
         public int PartidoId = 1;
 
-        private DataAdmin()
-        {
-
-        }
+        private DataAdmin() { }
 
         public static DataAdmin getInstance
         {
