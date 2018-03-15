@@ -51,6 +51,9 @@ namespace Lab03_ED1
     /// <typeparam name="T">Tipo de Dato en Arbol</typeparam>
     public class ArbolAVL <T> where T : IComparable
     {
+        public delegate int Comparador(T dato);
+        Comparador comparador;
+
         /// <summary>
         /// Nodo Raiz de Arbol
         /// </summary>
@@ -60,7 +63,16 @@ namespace Lab03_ED1
         /// </summary>
         public ArbolAVL()
         {
-            this.Raiz = null;
+            Raiz = null;
+            comparador = null;
+        }
+        /// <summary>
+        /// Constructor de Arbol
+        /// </summary>
+        /// <param name="delegadoDeOrden">Delegdo de Comparadores</param>
+        public ArbolAVL(Comparador delegadoDeOrden)
+        {
+            comparador = delegadoDeOrden;
         }
 
         //Buscar
@@ -72,23 +84,56 @@ namespace Lab03_ED1
         /// <returns></returns>
         public NodoArbolAVL<T> Buscar(T value, NodoArbolAVL<T> raiz)
         {
-            if (Raiz == null)
+            if (comparador == null)
             {
-                return null;
-            }
-            else if (raiz.value.CompareTo(value) == 0)
+                if (Raiz == null)
+                {
+                    return null;
+                }
+                else if (raiz.value.CompareTo(value) == 0)
+                {
+                    return raiz;
+                }
+                else if (raiz.value.CompareTo(value) == -1)
+                {
+                    return Buscar(value, raiz.hijoDerecho);
+                }
+                else
+                {
+                    return Buscar(value, raiz.hijoIzquierdo);
+                }
+            }else
             {
-                return raiz;
+                if (Raiz == null)
+                {
+                    return null;
+                }
+                else if (comparador(value) == 0)
+                {
+                    return raiz;
+                }
+                else if (comparador(value) == -1)
+                {
+                    return Buscar(value, raiz.hijoDerecho);
+                }
+                else
+                {
+                    return Buscar(value, raiz.hijoIzquierdo);
+                }
             }
-            else if (raiz.value.CompareTo(value) == -1)
-            {
-                return Buscar(value, raiz.hijoDerecho);
-            }
-            else
-            {
-                return Buscar(value, raiz.hijoIzquierdo);
-            }
+            
         }
+        /// <summary>
+        /// Funcion que devuelve el nodo con valor determinado
+        /// </summary>
+        /// <param name="value">ValorBuscado</param>
+        /// <returns>Nodo encontrado</returns>
+        public NodoArbolAVL<T> Buscar(T value)
+        {
+            return Buscar(value, Raiz);
+        }
+
+
 
         //Obtener Factor de Equilibrio
         private int ObtenerFactorEquilibrio(NodoArbolAVL <T> x)
@@ -158,7 +203,7 @@ namespace Lab03_ED1
                     SubArbol.hijoIzquierdo = InsertarAVL(Nuevo, SubArbol.hijoIzquierdo);
                     if (ObtenerFactorEquilibrio(SubArbol.hijoIzquierdo) - ObtenerFactorEquilibrio (SubArbol.hijoDerecho) == 2 )
                     {
-                        if (Nuevo.value.CompareTo(SubArbol.hijoIzquierdo) == -1)
+                        if (Nuevo.value.CompareTo(SubArbol.hijoIzquierdo.value) == -1)
                         {
                             NuevoPadre = RotacionIzquierda(SubArbol);
                         }
@@ -182,7 +227,7 @@ namespace Lab03_ED1
                     SubArbol.hijoDerecho = InsertarAVL(Nuevo, SubArbol.hijoDerecho);
                     if (ObtenerFactorEquilibrio(SubArbol.hijoDerecho) - ObtenerFactorEquilibrio(SubArbol.hijoIzquierdo) == 2)
                     {
-                        if (Nuevo.value.CompareTo(SubArbol.hijoDerecho) == 1)
+                        if (Nuevo.value.CompareTo(SubArbol.hijoDerecho.value) == 1)
                         {
                             NuevoPadre = RotacionDerecha(SubArbol);
                         }
@@ -368,7 +413,8 @@ namespace Lab03_ED1
  }
             return nodoP;
 
-        }
+        }
+
 
         /// <summary>
         /// Elimina un Nodo mediante sustitucion

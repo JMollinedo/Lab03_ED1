@@ -41,6 +41,43 @@ namespace Lab03_ED1.Models
             return FechaPartido.CompareTo(Partido.FechaPartido);
         }
         /// <summary>
+        /// Compara el objeto partido por Grupo
+        /// </summary>
+        /// <param name="Partido"></param>
+        /// <returns></returns>
+        public int CompareByGrupo(Partido Partido)
+        {
+            return Grupo.CompareTo(Partido.Grupo);
+        }
+        /// <summary>
+        /// Compara el objeto partido por Pais 1
+        /// </summary>
+        /// <param name="Partido"></param>
+        /// <returns></returns>
+        public int ComparteByPais1(Partido Partido)
+        {
+            return Pais1.CompareTo(Partido.Pais1);
+        }
+        /// <summary>
+        /// Compara el objeto partido por Pais 2
+        /// </summary>
+        /// <param name="Partido"></param>
+        /// <returns></returns>
+        public int CompareByPais2(Partido Partido)
+        {
+            return Pais2.CompareTo(Partido.Pais2);
+        }
+        /// <summary>
+        /// Compara el objeto partido por Estadio
+        /// </summary>
+        /// <param name="Partido"></param>
+        /// <returns></returns>
+        public int CompareByEstadio(Partido Partido)
+        {
+            return Estadio.CompareTo(Partido.Estadio);
+        }
+
+        /// <summary>
         /// Método CompareTo Modelo PARTIDO
         /// </summary>
         /// <param name="obj"></param>
@@ -56,6 +93,24 @@ namespace Lab03_ED1.Models
             {
                 throw ex;
             }
+        }
+
+        /// <summary>
+        /// Delegado para determinar Factor de Orden
+        /// </summary>
+        /// <param name="Partido">Partido compadado</param>
+        /// <returns>Valor de Comparacion</returns>
+        public delegate int Comparar(Partido Partido);
+
+        /// <summary>
+        /// Funcion comparcion por delegado
+        /// </summary>
+        /// <param name="partido">Partido a Comparar</param>
+        /// <param name="criterio">Delegado</param>
+        /// <returns>Valor de Comparación</returns>
+        public int CompareTo(Partido partido, Comparar criterio)
+        {
+            return criterio(partido);
         }
 
         public Partido(int noPartido, string FechaPartido, string Grupo, string Pais1, string Pais2, string Estadio)
