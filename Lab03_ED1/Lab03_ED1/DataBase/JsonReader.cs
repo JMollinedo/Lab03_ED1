@@ -25,8 +25,8 @@ namespace Lab03_ED1.DataBase
                 StreamReader lector = new StreamReader(rutaOrigen);
                 string dataAsString = lector.ReadToEnd();
                 lector.Close();
-                dataAsString.Remove(0, 1);
-                dataAsString.Remove(dataAsString.Length - 1, 1);
+                dataAsString = dataAsString.Remove(0, 1);
+                dataAsString = dataAsString.Remove(dataAsString.Length - 1, 1);
                 string temp = string.Empty;
                 foreach (char c in dataAsString)
                 {

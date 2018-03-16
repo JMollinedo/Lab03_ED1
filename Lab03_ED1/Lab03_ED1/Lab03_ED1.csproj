@@ -123,6 +123,7 @@
     <Compile Include="ArbolAVL.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PartidoController.cs" />
+    <Compile Include="DataBase\Comparadores.cs" />
     <Compile Include="DataBase\DataAdmin.cs" />
     <Compile Include="DataBase\JsonReader.cs" />
     <Compile Include="Global.asax.cs">

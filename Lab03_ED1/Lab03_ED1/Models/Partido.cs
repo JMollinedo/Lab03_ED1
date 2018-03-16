@@ -96,7 +96,7 @@ namespace Lab03_ED1.Models
         }
 
         /// <summary>
-        /// Delegado para determinar Factor de Orden
+        /// Delegado para determinar Factor de Orden utilizando el Objeto actual
         /// </summary>
         /// <param name="Partido">Partido compadado</param>
         /// <returns>Valor de Comparacion</returns>

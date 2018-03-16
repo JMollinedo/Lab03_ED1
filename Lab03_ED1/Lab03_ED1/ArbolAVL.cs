@@ -51,7 +51,7 @@ namespace Lab03_ED1
     /// <typeparam name="T">Tipo de Dato en Arbol</typeparam>
     public class ArbolAVL <T> where T : IComparable
     {
-        public delegate int Comparador(T dato);
+        public delegate int Comparador(T dato1, T dato2);
         Comparador comparador;
 
         /// <summary>
@@ -108,11 +108,11 @@ namespace Lab03_ED1
                 {
                     return null;
                 }
-                else if (comparador(value) == 0)
+                else if (comparador(raiz.value, value) == 0)
                 {
                     return raiz;
                 }
-                else if (comparador(value) == -1)
+                else if (comparador(raiz.value, value) == -1)
                 {
                     return Buscar(value, raiz.hijoDerecho);
                 }
@@ -121,7 +121,6 @@ namespace Lab03_ED1
                     return Buscar(value, raiz.hijoIzquierdo);
                 }
             }
-            
         }
         /// <summary>
         /// Funcion que devuelve el nodo con valor determinado
@@ -133,9 +132,11 @@ namespace Lab03_ED1
             return Buscar(value, Raiz);
         }
 
-
-
-        //Obtener Factor de Equilibrio
+        /// <summary>
+        /// Obtener Factor de Equilibrio
+        /// </summary>
+        /// <param name="x">Nodo</param>
+        /// <returns>Factor de Equilibrio de Nodo</returns>
         private int ObtenerFactorEquilibrio(NodoArbolAVL <T> x)
         {
             if (x == null)
@@ -146,7 +147,11 @@ namespace Lab03_ED1
                return x.factorEquilibrio;
         }
 
-        //Rotación Simple Izquierda
+        /// <summary>
+        /// Rotación Simple Izquierda
+        /// </summary>
+        /// <param name="Nodo">Nodo Raiz de Rotacion</param>
+        /// <returns></returns>
         private NodoArbolAVL<T> RotacionIzquierda(NodoArbolAVL<T> Nodo)
         {
             NodoArbolAVL<T> Auxiliar = Nodo.hijoIzquierdo;
@@ -158,7 +163,12 @@ namespace Lab03_ED1
             Auxiliar.factorEquilibrio = Math.Max(ObtenerFactorEquilibrio(Auxiliar.hijoIzquierdo), ObtenerFactorEquilibrio(Auxiliar.hijoDerecho)) + 1;
             return Auxiliar;
         }
-        //Rotación Simple Derecha
+
+        /// <summary>
+        /// Rotación Simple Derecha
+        /// </summary>
+        /// <param name="Nodo">Nodo Raiz de Rotacion</param>
+        /// <returns></returns>
         private NodoArbolAVL<T> RotacionDerecha(NodoArbolAVL<T> Nodo)
         {
             NodoArbolAVL<T> Auxiliar = Nodo.hijoDerecho;
@@ -171,7 +181,11 @@ namespace Lab03_ED1
             return Auxiliar;
         }
 
-        //Rotación Doble Izquierda
+        /// <summary>
+        /// Rotación Doble Izquierda
+        /// </summary>
+        /// <param name="Nodo">Nodo Raiz de Rotacion</param>
+        /// <returns></returns>
         private NodoArbolAVL<T> RotacionDobleIzquierda(NodoArbolAVL<T> Nodo)
         {
             NodoArbolAVL<T> Auxiliar;
@@ -179,7 +193,11 @@ namespace Lab03_ED1
             Auxiliar = RotacionIzquierda(Nodo);
             return Auxiliar;
         }
-        //Rotación Doble Derecha
+        /// <summary>
+        /// Rotación Doble Derecha
+        /// </summary>
+        /// <param name="Nodo">Nodo Raiz de Rotacion</param>
+        /// <returns></returns>
         private NodoArbolAVL<T> RotacionDobleDerecha(NodoArbolAVL<T> Nodo)
         {
             NodoArbolAVL<T> Auxiliar;
@@ -187,76 +205,160 @@ namespace Lab03_ED1
             Auxiliar = RotacionDerecha(Nodo);
             return Auxiliar;
         }
-        
-        //Metodo InsertarAVL
-        private NodoArbolAVL <T> InsertarAVL(NodoArbolAVL <T> Nuevo, NodoArbolAVL<T> SubArbol)
-        {
-            NodoArbolAVL<T> NuevoPadre = SubArbol;
-            if (Nuevo.value.CompareTo(SubArbol.value) == -1)
-            {
-                if (SubArbol.hijoIzquierdo == null)
-                {
-                    SubArbol.hijoIzquierdo = Nuevo;
-                }
-                else
-                {
-                    SubArbol.hijoIzquierdo = InsertarAVL(Nuevo, SubArbol.hijoIzquierdo);
-                    if (ObtenerFactorEquilibrio(SubArbol.hijoIzquierdo) - ObtenerFactorEquilibrio (SubArbol.hijoDerecho) == 2 )
-                    {
-                        if (Nuevo.value.CompareTo(SubArbol.hijoIzquierdo.value) == -1)
-                        {
-                            NuevoPadre = RotacionIzquierda(SubArbol);
-                        }
-                        else
-                        {
-                            NuevoPadre = RotacionDobleIzquierda(SubArbol);
-                        }
-                    }
-                }
-                
 
-            }
-            else if(Nuevo.value.CompareTo(SubArbol.value) == 1)
+        //Metodo InsertarAVL
+        /// <summary>
+        /// Inserta un valor en arbol
+        /// </summary>
+        /// <param name="Nuevo">Nodo Nuevo</param>
+        /// <param name="SubArbol">Nodo Acutal</param>
+        /// <returns></returns>
+        private NodoArbolAVL<T> InsertarAVL(NodoArbolAVL<T> Nuevo, NodoArbolAVL<T> SubArbol)
+        {
+            if (comparador == null)
             {
-                if (SubArbol.hijoDerecho == null)
+                #region ComparadorDefault
+                NodoArbolAVL<T> NuevoPadre = SubArbol;
+                if (Nuevo.value.CompareTo(SubArbol.value) == -1)
                 {
-                    SubArbol.hijoDerecho = Nuevo;
-                }
-                else
-                {
-                    SubArbol.hijoDerecho = InsertarAVL(Nuevo, SubArbol.hijoDerecho);
-                    if (ObtenerFactorEquilibrio(SubArbol.hijoDerecho) - ObtenerFactorEquilibrio(SubArbol.hijoIzquierdo) == 2)
+                    if (SubArbol.hijoIzquierdo == null)
                     {
-                        if (Nuevo.value.CompareTo(SubArbol.hijoDerecho.value) == 1)
+                        SubArbol.hijoIzquierdo = Nuevo;
+                    }
+                    else
+                    {
+                        SubArbol.hijoIzquierdo = InsertarAVL(Nuevo, SubArbol.hijoIzquierdo);
+                        if (ObtenerFactorEquilibrio(SubArbol.hijoIzquierdo) - ObtenerFactorEquilibrio(SubArbol.hijoDerecho) == 2)
                         {
-                            NuevoPadre = RotacionDerecha(SubArbol);
+                            if (Nuevo.value.CompareTo(SubArbol.hijoIzquierdo.value) == -1)
+                            {
+                                NuevoPadre = RotacionIzquierda(SubArbol);
+                            }
+                            else
+                            {
+                                NuevoPadre = RotacionDobleIzquierda(SubArbol);
+                            }
                         }
-                        else
+                    }
+
+
+                }
+                else if (Nuevo.value.CompareTo(SubArbol.value) == 1)
+                {
+                    if (SubArbol.hijoDerecho == null)
+                    {
+                        SubArbol.hijoDerecho = Nuevo;
+                    }
+                    else
+                    {
+                        SubArbol.hijoDerecho = InsertarAVL(Nuevo, SubArbol.hijoDerecho);
+                        if (ObtenerFactorEquilibrio(SubArbol.hijoDerecho) - ObtenerFactorEquilibrio(SubArbol.hijoIzquierdo) == 2)
                         {
-                            NuevoPadre = RotacionDobleDerecha(SubArbol);
+                            if (Nuevo.value.CompareTo(SubArbol.hijoDerecho.value) == 1)
+                            {
+                                NuevoPadre = RotacionDerecha(SubArbol);
+                            }
+                            else
+                            {
+                                NuevoPadre = RotacionDobleDerecha(SubArbol);
+                            }
                         }
                     }
                 }
+                else
+                {
+                    throw new System.InvalidOperationException("Nodo Duplicado");
+                }
+                //Actualizando Factor Equilibrio
+                if (SubArbol.hijoIzquierdo == null && SubArbol.hijoDerecho != null)
+                {
+                    SubArbol.factorEquilibrio = SubArbol.hijoDerecho.factorEquilibrio + 1;
+                }
+                else if (SubArbol.hijoDerecho == null && SubArbol.hijoIzquierdo != null)
+                {
+                    SubArbol.factorEquilibrio = SubArbol.hijoIzquierdo.factorEquilibrio + 1;
+                }
+                else
+                {
+                    SubArbol.factorEquilibrio = Math.Max(ObtenerFactorEquilibrio(SubArbol.hijoIzquierdo), ObtenerFactorEquilibrio(SubArbol.hijoDerecho)) + 1;
+                }
+                return NuevoPadre;
+                #endregion
             }
             else
             {
-                throw new System.InvalidOperationException("Nodo Duplicado");
+                #region ComparadorDelegado
+                NodoArbolAVL<T> NuevoPadre = SubArbol;
+                if (comparador(Nuevo.value, SubArbol.value) == -1)
+                {
+                    if (SubArbol.hijoIzquierdo == null)
+                    {
+                        SubArbol.hijoIzquierdo = Nuevo;
+                    }
+                    else
+                    {
+                        SubArbol.hijoIzquierdo = InsertarAVL(Nuevo, SubArbol.hijoIzquierdo);
+                        if (ObtenerFactorEquilibrio(SubArbol.hijoIzquierdo) - ObtenerFactorEquilibrio(SubArbol.hijoDerecho) == 2)
+                        {
+                            if (comparador(Nuevo.value, SubArbol.hijoIzquierdo.value) == -1)
+                            {
+                                NuevoPadre = RotacionIzquierda(SubArbol);
+                            }
+                            else
+                            {
+                                NuevoPadre = RotacionDobleIzquierda(SubArbol);
+                            }
+                        }
+                    }
+                }
+                else if (comparador(Nuevo.value, SubArbol.value) == 1)
+                {
+                    if (SubArbol.hijoDerecho == null)
+                    {
+                        SubArbol.hijoDerecho = Nuevo;
+                    }
+                    else
+                    {
+                        SubArbol.hijoDerecho = InsertarAVL(Nuevo, SubArbol.hijoDerecho);
+                        if (ObtenerFactorEquilibrio(SubArbol.hijoDerecho) - ObtenerFactorEquilibrio(SubArbol.hijoIzquierdo) == 2)
+                        {
+                            if (comparador(Nuevo.value, SubArbol.hijoDerecho.value) == 1)
+                            {
+                                NuevoPadre = RotacionDerecha(SubArbol);
+                            }
+                            else
+                            {
+                                NuevoPadre = RotacionDobleDerecha(SubArbol);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    throw new System.InvalidOperationException("Nodo Duplicado");
+                }
+                //Actualizando Factor Equilibrio
+                if (SubArbol.hijoIzquierdo == null && SubArbol.hijoDerecho != null)
+                {
+                    SubArbol.factorEquilibrio = SubArbol.hijoDerecho.factorEquilibrio + 1;
+                }
+                else if (SubArbol.hijoDerecho == null && SubArbol.hijoIzquierdo != null)
+                {
+                    SubArbol.factorEquilibrio = SubArbol.hijoIzquierdo.factorEquilibrio + 1;
+                }
+                else
+                {
+                    SubArbol.factorEquilibrio = Math.Max(ObtenerFactorEquilibrio(SubArbol.hijoIzquierdo), ObtenerFactorEquilibrio(SubArbol.hijoDerecho)) + 1;
+                }
+                return NuevoPadre;
+                #endregion
             }
-            //Actualizando Factor Equilibrio
-            if (SubArbol.hijoIzquierdo == null && SubArbol.hijoDerecho != null)
-            {
-                SubArbol.factorEquilibrio = SubArbol.hijoDerecho.factorEquilibrio + 1;
-            }
-            else if (SubArbol.hijoDerecho == null && SubArbol.hijoIzquierdo != null)
-            {
-                SubArbol.factorEquilibrio = SubArbol.hijoIzquierdo.factorEquilibrio + 1;
-            }
-            else
-            {
-                SubArbol.factorEquilibrio = Math.Max(ObtenerFactorEquilibrio(SubArbol.hijoIzquierdo), ObtenerFactorEquilibrio(SubArbol.hijoDerecho)) +1;
-            }
-            return NuevoPadre;
         }
+
+        /// <summary>
+        /// Inserta un nuevo valor al arbol
+        /// </summary>
+        /// <param name="value">Valor Ingresado</param>
         public void Insertar(T value)
         {
             NodoArbolAVL<T> Nuevo = new NodoArbolAVL<T>(value);
@@ -268,136 +370,272 @@ namespace Lab03_ED1
             {
                 Raiz = InsertarAVL(Nuevo, Raiz);
             }
-
         }
-
 
         /// <summary>
         /// Eliminación de un nodo, balancenado.
         /// </summary>
         NodoArbolAVL<T> nodoE, nodoP;
+        /// <summary>
+        /// Elimina un valor del arbol
+        /// </summary>
+        /// <param name="valorEliminar">Valor a borrar</param>
+        /// <param name="Raiz">Nodo Actual</param>
+        /// <returns>Nodo con el valor Buscado</returns>
         public NodoArbolAVL<T> Eliminar(T valorEliminar, ref NodoArbolAVL<T> Raiz)
         {
-
-            if (Raiz != null)
-  {
-
-                if (Raiz.value.CompareTo(valorEliminar)==-1)
+            if(comparador == null)
+            {
+                #region ComparadorPorDefault
+                if (Raiz != null)
                 {
-
-                    nodoE = Raiz;
-                    Eliminar(valorEliminar, ref Raiz.hijoIzquierdo);
-                }
-                else
-                {
-                    if (Raiz.value.CompareTo(valorEliminar) == 1)
+                    if (Raiz.value.CompareTo(valorEliminar) == -1)
                     {
-
                         nodoE = Raiz;
                         Eliminar(valorEliminar, ref Raiz.hijoIzquierdo);
                     }
                     else
                     {
-                        //Posicionado sobre el elemento a eliminar
-                        NodoArbolAVL<T> NodoEliminar = Raiz;
-                        if (NodoEliminar.hijoDerecho == null)
+                        if (Raiz.value.CompareTo(valorEliminar) == 1)
                         {
-                            Raiz = NodoEliminar.hijoIzquierdo;
-
-                            if (ObtenerFactorEquilibrio(nodoE.hijoIzquierdo) - ObtenerFactorEquilibrio(nodoE.hijoDerecho) == 2)
-                            {
-                                //MessageBox.Show("nodoE" + nodoE.valor.ToString());
-                                if (nodoE.value.CompareTo(valorEliminar) == 1)
-                                    nodoP = RotacionIzquierda(nodoE);
-                                else
-                                    nodoE = RotacionDerecha(nodoE);
-                            }
-                            if (ObtenerFactorEquilibrio(nodoE.hijoDerecho) - ObtenerFactorEquilibrio(nodoE.hijoIzquierdo) == 2)
-                            {
-                                if (nodoE.hijoDerecho.value.CompareTo(valorEliminar)==-1)
-                                    nodoE = RotacionDerecha(nodoE);
-                                else
-                                    nodoE = RotacionDobleDerecha(nodoE);
-                                nodoP = RotacionDerecha(nodoE);
-                            }
+                            nodoE = Raiz;
+                            Eliminar(valorEliminar, ref Raiz.hijoIzquierdo);
                         }
                         else
                         {
-                            if (NodoEliminar.hijoIzquierdo == null)
+                            //Posicionado sobre el elemento a eliminar
+                            NodoArbolAVL<T> NodoEliminar = Raiz;
+                            if (NodoEliminar.hijoDerecho == null)
                             {
-                                Raiz = NodoEliminar.hijoDerecho;
+                                Raiz = NodoEliminar.hijoIzquierdo;
+                                if (ObtenerFactorEquilibrio(nodoE.hijoIzquierdo) - ObtenerFactorEquilibrio(nodoE.hijoDerecho) == 2)
+                                {
+                                    //MessageBox.Show("nodoE" + nodoE.valor.ToString());
+                                    if (nodoE.value.CompareTo(valorEliminar) == 1)
+                                        nodoP = RotacionIzquierda(nodoE);
+                                    else
+                                        nodoE = RotacionDerecha(nodoE);
+                                }
+                                if (ObtenerFactorEquilibrio(nodoE.hijoDerecho) - ObtenerFactorEquilibrio(nodoE.hijoIzquierdo) == 2)
+                                {
+                                    if (nodoE.hijoDerecho.value.CompareTo(valorEliminar) == -1)
+                                        nodoE = RotacionDerecha(nodoE);
+                                    else
+                                        nodoE = RotacionDobleDerecha(nodoE);
+                                        nodoP = RotacionDerecha(nodoE);
+                                }
                             }
                             else
                             {
-                                if (ObtenerFactorEquilibrio(Raiz.hijoIzquierdo) - ObtenerFactorEquilibrio(Raiz.hijoDerecho) > 0)
+                                if (NodoEliminar.hijoIzquierdo == null)
                                 {
-                                    NodoArbolAVL<T> AuxiliarNodo = null;
-                                    NodoArbolAVL<T> Auxiliar = Raiz.hijoIzquierdo;
-                                    bool Bandera = false;
-                                    while (Auxiliar.hijoDerecho != null)
-                                    {
-                                        AuxiliarNodo = Auxiliar;
-                                        Auxiliar = Auxiliar.hijoDerecho;
-                                        Bandera = true;
-                                    }
-                                    Raiz.value = Auxiliar.value;
-                                    NodoEliminar = Auxiliar;
-                                    if (Bandera == true)
-                                    {
-                                        AuxiliarNodo.hijoDerecho = Auxiliar.hijoIzquierdo;
-                                    }
-                                else
-{
-                                        Raiz.hijoIzquierdo = Auxiliar.hijoIzquierdo;
-                                    }
-                                    //Realiza las rotaciones simples o dobles segun el caso
+                                    Raiz = NodoEliminar.hijoDerecho;
                                 }
                                 else
                                 {
-                                    if (ObtenerFactorEquilibrio(Raiz.hijoDerecho) - ObtenerFactorEquilibrio(Raiz.hijoIzquierdo) > 0)
+                                    if (ObtenerFactorEquilibrio(Raiz.hijoIzquierdo) - ObtenerFactorEquilibrio(Raiz.hijoDerecho) > 0)
                                     {
                                         NodoArbolAVL<T> AuxiliarNodo = null;
-                                        NodoArbolAVL<T> Auxiliar = Raiz.hijoDerecho;
+                                        NodoArbolAVL<T> Auxiliar = Raiz.hijoIzquierdo;
                                         bool Bandera = false;
-                                        while (Auxiliar.hijoIzquierdo != null)
+                                        while (Auxiliar.hijoDerecho != null)
                                         {
                                             AuxiliarNodo = Auxiliar;
-                                            Auxiliar = Auxiliar.hijoIzquierdo;
+                                            Auxiliar = Auxiliar.hijoDerecho;
                                             Bandera = true;
                                         }
                                         Raiz.value = Auxiliar.value;
                                         NodoEliminar = Auxiliar;
                                         if (Bandera == true)
                                         {
-                                            AuxiliarNodo.hijoIzquierdo = Auxiliar.hijoIzquierdo;
+                                            AuxiliarNodo.hijoDerecho = Auxiliar.hijoIzquierdo;
                                         }
                                         else
                                         {
-                                            Raiz.hijoDerecho = Auxiliar.hijoDerecho;
+                                            Raiz.hijoIzquierdo = Auxiliar.hijoIzquierdo;
                                         }
+                                        //Realiza las rotaciones simples o dobles segun el caso
                                     }
                                     else
                                     {
-                                        if (ObtenerFactorEquilibrio(Raiz.hijoDerecho) - ObtenerFactorEquilibrio(Raiz.hijoIzquierdo) == 0)
+                                        if (ObtenerFactorEquilibrio(Raiz.hijoDerecho) - ObtenerFactorEquilibrio(Raiz.hijoIzquierdo) > 0)
                                         {
                                             NodoArbolAVL<T> AuxiliarNodo = null;
-                                            NodoArbolAVL<T> Auxiliar = Raiz.hijoIzquierdo;
+                                            NodoArbolAVL<T> Auxiliar = Raiz.hijoDerecho;
                                             bool Bandera = false;
-                                            while (Auxiliar.hijoDerecho != null)
+                                            while (Auxiliar.hijoIzquierdo != null)
                                             {
                                                 AuxiliarNodo = Auxiliar;
-                                                Auxiliar = Auxiliar.hijoDerecho;
+                                                Auxiliar = Auxiliar.hijoIzquierdo;
                                                 Bandera = true;
                                             }
                                             Raiz.value = Auxiliar.value;
                                             NodoEliminar = Auxiliar;
                                             if (Bandera == true)
                                             {
-                                                AuxiliarNodo.hijoDerecho = Auxiliar.hijoDerecho;
+                                                AuxiliarNodo.hijoIzquierdo = Auxiliar.hijoIzquierdo;
                                             }
                                             else
                                             {
-                                                Raiz.hijoIzquierdo = Auxiliar.hijoIzquierdo;
+                                                Raiz.hijoDerecho = Auxiliar.hijoDerecho;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (ObtenerFactorEquilibrio(Raiz.hijoDerecho) - ObtenerFactorEquilibrio(Raiz.hijoIzquierdo) == 0)
+                                            {
+                                                NodoArbolAVL<T> AuxiliarNodo = null;
+                                                NodoArbolAVL<T> Auxiliar = Raiz.hijoIzquierdo;
+                                                bool Bandera = false;
+                                                while (Auxiliar.hijoDerecho != null)
+                                                {
+                                                    AuxiliarNodo = Auxiliar;
+                                                    Auxiliar = Auxiliar.hijoDerecho;
+                                                    Bandera = true;
+                                                }
+                                                Raiz.value = Auxiliar.value;
+                                                NodoEliminar = Auxiliar;
+                                                if (Bandera == true)
+                                                {
+                                                    AuxiliarNodo.hijoDerecho = Auxiliar.hijoDerecho;
+                                                }
+                                                else
+                                                {
+                                                    Raiz.hijoIzquierdo = Auxiliar.hijoIzquierdo;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }   
+                else
+                {
+                    throw new System.InvalidOperationException("Nodo inexistente en el arbol");
+                }
+                return nodoP;
+                #endregion
+            }
+            else{
+                #region ComparadorDelegado
+                if (Raiz != null)
+                {
+                    if (comparador(Raiz.value, valorEliminar) == -1)
+                    {
+                        nodoE = Raiz;
+                        Eliminar(valorEliminar, ref Raiz.hijoIzquierdo);
+                    }
+                    else
+                    {
+                        if (comparador(Raiz.value, valorEliminar) == 1)
+                        {
+                            nodoE = Raiz;
+                            Eliminar(valorEliminar, ref Raiz.hijoIzquierdo);
+                        }
+                        else
+                        {
+                            //Posicionado sobre el elemento a eliminar
+                            NodoArbolAVL<T> NodoEliminar = Raiz;
+                            if (NodoEliminar.hijoDerecho == null)
+                            {
+                                Raiz = NodoEliminar.hijoIzquierdo;
+                                if (ObtenerFactorEquilibrio(nodoE.hijoIzquierdo) - ObtenerFactorEquilibrio(nodoE.hijoDerecho) == 2)
+                                {
+                                    //MessageBox.Show("nodoE" + nodoE.valor.ToString());
+                                    if (comparador(nodoE.value, valorEliminar) == 1)
+                                        nodoP = RotacionIzquierda(nodoE);
+                                    else
+                                        nodoE = RotacionDerecha(nodoE);
+                                }
+                                if (ObtenerFactorEquilibrio(nodoE.hijoDerecho) - ObtenerFactorEquilibrio(nodoE.hijoIzquierdo) == 2)
+                                {
+                                    if (comparador(nodoE.hijoDerecho.value, valorEliminar) == -1)
+                                        nodoE = RotacionDerecha(nodoE);
+                                    else
+                                        nodoE = RotacionDobleDerecha(nodoE);
+                                    nodoP = RotacionDerecha(nodoE);
+                                }
+                            }
+                            else
+                            {
+                                if (NodoEliminar.hijoIzquierdo == null)
+                                {
+                                    Raiz = NodoEliminar.hijoDerecho;
+                                }
+                                else
+                                {
+                                    if (ObtenerFactorEquilibrio(Raiz.hijoIzquierdo) - ObtenerFactorEquilibrio(Raiz.hijoDerecho) > 0)
+                                    {
+                                        NodoArbolAVL<T> AuxiliarNodo = null;
+                                        NodoArbolAVL<T> Auxiliar = Raiz.hijoIzquierdo;
+                                        bool Bandera = false;
+                                        while (Auxiliar.hijoDerecho != null)
+                                        {
+                                            AuxiliarNodo = Auxiliar;
+                                            Auxiliar = Auxiliar.hijoDerecho;
+                                            Bandera = true;
+                                        }
+                                        Raiz.value = Auxiliar.value;
+                                        NodoEliminar = Auxiliar;
+                                        if (Bandera == true)
+                                        {
+                                            AuxiliarNodo.hijoDerecho = Auxiliar.hijoIzquierdo;
+                                        }
+                                        else
+                                        {
+                                            Raiz.hijoIzquierdo = Auxiliar.hijoIzquierdo;
+                                        }
+                                        //Realiza las rotaciones simples o dobles segun el caso
+                                    }
+                                    else
+                                    {
+                                        if (ObtenerFactorEquilibrio(Raiz.hijoDerecho) - ObtenerFactorEquilibrio(Raiz.hijoIzquierdo) > 0)
+                                        {
+                                            NodoArbolAVL<T> AuxiliarNodo = null;
+                                            NodoArbolAVL<T> Auxiliar = Raiz.hijoDerecho;
+                                            bool Bandera = false;
+                                            while (Auxiliar.hijoIzquierdo != null)
+                                            {
+                                                AuxiliarNodo = Auxiliar;
+                                                Auxiliar = Auxiliar.hijoIzquierdo;
+                                                Bandera = true;
+                                            }
+                                            Raiz.value = Auxiliar.value;
+                                            NodoEliminar = Auxiliar;
+                                            if (Bandera == true)
+                                            {
+                                                AuxiliarNodo.hijoIzquierdo = Auxiliar.hijoIzquierdo;
+                                            }
+                                            else
+                                            {
+                                                Raiz.hijoDerecho = Auxiliar.hijoDerecho;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (ObtenerFactorEquilibrio(Raiz.hijoDerecho) - ObtenerFactorEquilibrio(Raiz.hijoIzquierdo) == 0)
+                                            {
+                                                NodoArbolAVL<T> AuxiliarNodo = null;
+                                                NodoArbolAVL<T> Auxiliar = Raiz.hijoIzquierdo;
+                                                bool Bandera = false;
+                                                while (Auxiliar.hijoDerecho != null)
+                                                {
+                                                    AuxiliarNodo = Auxiliar;
+                                                    Auxiliar = Auxiliar.hijoDerecho;
+                                                    Bandera = true;
+                                                }
+                                                Raiz.value = Auxiliar.value;
+                                                NodoEliminar = Auxiliar;
+                                                if (Bandera == true)
+                                                {
+                                                    AuxiliarNodo.hijoDerecho = Auxiliar.hijoDerecho;
+                                                }
+                                                else
+                                                {
+                                                    Raiz.hijoIzquierdo = Auxiliar.hijoIzquierdo;
+                                                }
                                             }
                                         }
                                     }
@@ -406,15 +644,14 @@ namespace Lab03_ED1
                         }
                     }
                 }
+                else
+                {
+                    throw new System.InvalidOperationException("Nodo inexistente en el arbol");
+                }
+                return nodoP;
+                #endregion
             }
- else
- {
-                throw new System.InvalidOperationException("Nodo inexistente en el arbol");
- }
-            return nodoP;
-
         }
-
 
         /// <summary>
         /// Elimina un Nodo mediante sustitucion
@@ -530,7 +767,5 @@ namespace Lab03_ED1
                 Elements.Add(Aux.value);
             }
         }
-
-
     }
 }

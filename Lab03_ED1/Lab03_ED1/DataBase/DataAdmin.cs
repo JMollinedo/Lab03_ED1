@@ -11,10 +11,13 @@ namespace Lab03_ED1.DataBase
 
         private static volatile DataAdmin Instance;
         private static object syncRoot = new object();
+        private static Comparadores comparadores = new Comparadores();
 
-        public ArbolAVL<Partido> fArbolAVL = new ArbolAVL<Partido>();
-        public ArbolAVL<Partido> nArbolAVL = new ArbolAVL<Partido>();
-        public List<Partido> fListaPartidos = new List<Partido>();
+        //public ArbolAVL<Partido> fArbolAVL = new ArbolAVL<Partido>();
+        public ArbolAVL<Partido> fArbolAVL = new ArbolAVL<Partido>(comparadores.ComparisonByFecha);
+        //public ArbolAVL<Partido> nArbolAVL = new ArbolAVL<Partido>();
+        public ArbolAVL<Partido> nArbolAVL = new ArbolAVL<Partido>(comparadores.ComparisonByNoPartido);
+        public List<Partido> ListaPartidos = new List<Partido>();
         public int PartidoId = 1;
 
         private DataAdmin() { }

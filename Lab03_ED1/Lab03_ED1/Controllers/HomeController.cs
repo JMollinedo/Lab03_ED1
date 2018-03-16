@@ -41,17 +41,16 @@ namespace Lab03_ED1.Controllers
                         {
                             Datos.fArbolAVL.Insertar(match);
                             Datos.nArbolAVL.Insertar(match);
+                            Datos.ListaPartidos.Add(match);
                         }
 
                         // Asignar un ID al país para editar o eliminar
 
-                        foreach (var item in Datos.fListaPartidos)
+                        foreach (var item in Datos.ListaPartidos)
                         {
                             item.ID = Datos.PartidoId;
                             Datos.PartidoId++;
                         }
-
-
                         return RedirectToAction("Index");
                     }
                     else

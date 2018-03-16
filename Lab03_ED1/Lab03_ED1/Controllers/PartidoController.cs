@@ -14,7 +14,9 @@ namespace Lab03_ED1.Controllers
         // GET: Partido
         public ActionResult IndexFecha()
         {
-            return View(Datos.fListaPartidos);
+            List<Partido> lista = new List<Partido>();
+            Datos.fArbolAVL.Ordenar(ref lista, Datos.fArbolAVL.InOrder);
+            return View(lista);
         }
 
         // GET: Partido/Details/5
@@ -113,7 +115,7 @@ namespace Lab03_ED1.Controllers
 
                         // Asignar un ID al país para editar o eliminar
 
-                     foreach (var item in Datos.fListaPartidos)
+                     foreach (var item in Datos.ListaPartidos)
                         {
                             item.ID = Datos.PartidoId;
                             Datos.PartidoId++;
